@@ -1,0 +1,9 @@
+services:
+  dicom-gateway:
+    build: {context: .., dockerfile: deployments/Dockerfile}
+    ports: ["8080:8080"]
+    environment: ["DICOM_DATA_DIR=/var/lib/dicom"]
+    volumes: ["dicom-data:/var/lib/dicom"]
+    read_only: true
+    tmpfs: [/tmp]
+volumes: {dicom-data: {}}
