@@ -19,7 +19,7 @@ type Parser struct {
 func (p Parser) Parse(r io.Reader) (Dataset, error) {
 	data, err := io.ReadAll(io.LimitReader(r, p.MaxFileBytes+1))
 	if err != nil {
-		return Dataset{}, fmt.Errorf("read Part 10 stream: %v", err)
+		return Dataset{}, fmt.Errorf("read Part 10 stream: %w", err)
 	}
 	if int64(len(data)) > p.MaxFileBytes {
 		return Dataset{}, tooLarge(0, "file exceeds limit")
@@ -34,7 +34,7 @@ func (p Parser) Parse(r io.Reader) (Dataset, error) {
 	for off < len(data) {
 		e, n, err := p.element(data, off, true)
 		if err != nil {
-			return Dataset{}, fmt.Errorf("parse element at offset %d: %v", off, err)
+			return Dataset{}, fmt.Errorf("parse element at offset %d: %w", off, err)
 		}
 		off = n
 		d.Elements = append(d.Elements, e)

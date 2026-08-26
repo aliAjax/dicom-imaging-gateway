@@ -3,17 +3,21 @@ package transport
 import (
 	"encoding/json"
 	"example.com/dicom-gateway/internal/dicom"
+	"errors"
 	"net/http"
 )
 
 type ErrorMapper struct{}
 
 func (ErrorMapper) Status(err error) int {
-	pe := err.(*dicom.ParseError)
-	if pe.Kind == dicom.ErrTooLarge {
-		return http.StatusRequestEntityTooLarge
+	var pe *dicom.ParseError
+	if errors.As(err, &pe) {
+		if pe.Kind == dicom.ErrTooLarge {
+			return http.StatusRequestEntityTooLarge
+		}
+		return http.StatusBadRequest
 	}
-	return http.StatusBadRequest
+	return http.StatusInternalServerError
 }
 func writeError(w http.ResponseWriter, err error, requestID string) {
 	status := ErrorMapper{}.Status(err)

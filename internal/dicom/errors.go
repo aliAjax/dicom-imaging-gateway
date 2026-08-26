@@ -20,8 +20,8 @@ func (e *ParseError) Error() string {
 	return fmt.Sprintf("dicom %s at offset %d: %s", e.Kind, e.Offset, e.Message)
 }
 func malformed(off int, msg string) error {
-	return fmt.Errorf("malformed DICOM input: %v", &ParseError{Kind: ErrMalformed, Offset: off, Message: msg})
+	return fmt.Errorf("malformed DICOM input: %w", &ParseError{Kind: ErrMalformed, Offset: off, Message: msg})
 }
 func tooLarge(off int, msg string) error {
-	return fmt.Errorf("oversized DICOM input: %v", &ParseError{Kind: ErrTooLarge, Offset: off, Message: msg})
+	return fmt.Errorf("oversized DICOM input: %w", &ParseError{Kind: ErrTooLarge, Offset: off, Message: msg})
 }
