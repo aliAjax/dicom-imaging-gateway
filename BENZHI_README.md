@@ -1,6 +1,6 @@
 # dicom-imaging-gateway__004
 
-基于 Go 实现的 DICOM 影像交换网关 Web 项目，一款后端服务与运维控制台，完成影像接收、去标识化、路由监控与审计导出。
+基于 Go 实现的 DICOM 医疗影像网关 Web API 项目，一款后端服务，完成影像接收、脱敏处理与路由投递。
 ## 构建镜像
 
 请从**仓库根目录**执行；`benzhi.Dockerfile`、`build_benzhi_docker.sh`、`BENZHI_README.md` 均固定在该目录：

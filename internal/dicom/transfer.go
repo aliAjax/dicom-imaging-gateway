@@ -27,3 +27,17 @@ func Negotiated(local, remote []TransferSyntax) (TransferSyntax, error) {
 	}
 	return "", fmt.Errorf("transfer_syntax_no_common")
 }
+
+func SelectCodec(local []Codec, remote []string) (Codec, error) {
+	for _, candidate := range local {
+		if IsNilCodec(candidate) {
+			continue
+		}
+		for _, syntax := range remote {
+			if candidate.TransferSyntax() == syntax {
+				return candidate, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("transfer_syntax_no_common_codec")
+}

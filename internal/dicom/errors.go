@@ -2,8 +2,6 @@ package dicom
 
 import "fmt"
 
-var ErrCodecUnavailable error
-
 type ErrorKind string
 
 const (

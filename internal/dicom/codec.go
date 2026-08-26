@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"sync"
 )
 
@@ -30,8 +31,29 @@ func NewCodecRegistry() *CodecRegistry {
 	r.Register(PassthroughCodec{ImplicitVRLittleEndian})
 	return r
 }
+
+// IsNilCodec reports whether c is a nil interface or a typed-nil value
+// (e.g. (*RLECodec)(nil)). The plain `c == nil` check only catches the former;
+// a typed-nil codec still carries type info in the interface box, slips past
+// nil guards, and panics on the first method call. This is the root cause of
+// the ValidateWithCodec segfault observed after transfer-syntax negotiation.
+func IsNilCodec(c Codec) bool {
+	if c == nil {
+		return true
+	}
+	v := reflect.ValueOf(c)
+	switch v.Kind() {
+	case reflect.Ptr, reflect.Map, reflect.Slice, reflect.Chan, reflect.Func, reflect.Interface:
+		return v.IsNil()
+	}
+	return false
+}
+
 func (r *CodecRegistry) Register(c Codec) error {
-	if c == nil || c.TransferSyntax() == "" {
+	if IsNilCodec(c) {
+		return errors.New("codec is nil")
+	}
+	if c.TransferSyntax() == "" {
 		return errors.New("codec transfer syntax required")
 	}
 	r.mu.Lock()
@@ -46,7 +68,10 @@ func (r *CodecRegistry) Get(syntax string) (Codec, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	c, ok := r.codecs[syntax]
-	return c, ok
+	if !ok || IsNilCodec(c) {
+		return nil, false
+	}
+	return c, true
 }
 func (r *CodecRegistry) Transcode(ctx context.Context, source, target string, pixels []byte) ([]byte, error) {
 	src, ok := r.Get(source)

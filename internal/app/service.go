@@ -33,6 +33,19 @@ func New(p dicom.Parser, repo *repository.Repository, store storage.ObjectStore,
 func (s *Service) Validate(ctx context.Context, r io.Reader) (dicom.Dataset, error) {
 	return s.Parser.Parse(r)
 }
+
+func (s *Service) ValidateWithCodec(ctx context.Context, r io.Reader, codec dicom.Codec) (dicom.Dataset, error) {
+	if dicom.IsNilCodec(codec) {
+		return dicom.Dataset{}, fmt.Errorf("decode validation input: codec is nil")
+	}
+	decoded, err := codec.Decode(ctx, mustRead(r))
+	if err != nil {
+		return dicom.Dataset{}, fmt.Errorf("decode validation input: %w", err)
+	}
+	return s.Parser.Parse(&bytesReader{b: decoded})
+}
+
+func mustRead(r io.Reader) []byte { data, _ := io.ReadAll(r); return data }
 func (s *Service) Ingest(ctx context.Context, r io.Reader) (dicom.Instance, error) {
 	d, err := s.Parser.Parse(r)
 	if err != nil {

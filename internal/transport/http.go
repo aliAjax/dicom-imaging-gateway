@@ -7,7 +7,6 @@ import (
 	"example.com/dicom-gateway/internal/deid"
 	"example.com/dicom-gateway/internal/dicom"
 	"example.com/dicom-gateway/internal/repository"
-	"example.com/dicom-gateway/webui"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,6 +21,7 @@ type Server struct {
 
 func (s *Server) Handler(logger interface{ Info(string, ...any) }) http.Handler {
 	mux := http.NewServeMux()
+	registerConsole(mux)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	})
@@ -36,7 +36,6 @@ func (s *Server) Handler(logger interface{ Info(string, ...any) }) http.Handler 
 	mux.HandleFunc("/api/v1/jobs", s.jobs)
 	mux.HandleFunc("/api/v1/audit/export", s.auditExport)
 	mux.HandleFunc("/dicomweb/studies", s.ingest)
-	mux.Handle("/", webui.Handler())
 	return RequestID(mux)
 }
 func writeJSON(w http.ResponseWriter, status int, v any) {

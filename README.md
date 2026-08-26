@@ -14,8 +14,6 @@ go run ./cmd/dicom-gateway
 
 另一个终端运行 `scripts/smoke.sh`。默认监听 `:8080`，对象存储写入 `./data`。环境变量 `DICOM_HTTP_ADDR`、`DICOM_DATA_DIR`、`DICOM_MAX_ELEMENT_BYTES`、`DICOM_MAX_FILE_BYTES`、`DICOM_WORKERS` 可覆盖配置。
 
-浏览器打开 `/` 可进入运维控制台，查看服务就绪状态、影像实例、路由任务与目标节点。前端源码与零依赖构建脚本位于 `webui/`，执行 `npm ci && npm run build` 可生成独立的 `webui/dist/` 静态产物；服务二进制直接嵌入同一份源码资源。
-
 ## API
 
 - `POST /api/v1/ingest/validate`：解析并校验 DICOM Part 10。
@@ -25,7 +23,6 @@ go run ./cmd/dicom-gateway
 - `POST /api/v1/instances/{uid}/deidentify`：按 JSON 策略执行删除、替换、哈希和日期平移。
 - `GET/POST /api/v1/destinations`、`GET /api/v1/jobs`、`GET /api/v1/audit/export`。
 - `GET /healthz`、`GET /readyz`。
-- `GET /`：影像交换网关运维控制台。
 
 ## 架构
 

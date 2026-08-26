@@ -1,5 +1,5 @@
 # 评测用镜像：交付 Dockerfile 固定在仓库根目录，保留完整 Go 工具链。
-FROM golang:1.26.6
+FROM golang:1.26
 WORKDIR /app
 COPY go.mod ./
 WORKDIR /app

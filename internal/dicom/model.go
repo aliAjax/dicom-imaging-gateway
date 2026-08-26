@@ -10,10 +10,10 @@ type Tag struct {
 func (t Tag) String() string { return fmtTag(t.Group, t.Element) }
 func fmtTag(g, e uint16) string {
 	const hex = "0123456789ABCDEF"
-	b := make([]byte, 9)
+	b := make([]byte, 11)
 	b[0] = '('
 	b[5] = ','
-	b[8] = ')'
+	b[10] = ')'
 	for i := 0; i < 4; i++ {
 		b[1+i] = hex[(g>>uint(12-4*i))&15]
 		b[6+i] = hex[(e>>uint(12-4*i))&15]
