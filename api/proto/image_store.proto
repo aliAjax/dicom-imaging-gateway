@@ -1,0 +1,14 @@
+syntax = "proto3";
+package dicom.gateway.v1;
+option go_package = "example.com/dicom-gateway/api/proto";
+service ImageStore { rpc CStore(CStoreRequest) returns (CStoreResponse); }
+service Query { rpc Find(FindRequest) returns (FindResponse); rpc Move(MoveRequest) returns (MoveResponse); }
+service Deidentifier { rpc Transform(TransformRequest) returns (TransformResponse); }
+message CStoreRequest { bytes part10 = 1; string calling_ae = 2; string idempotency_key = 3; }
+message CStoreResponse { string sop_instance_uid = 1; string status = 2; }
+message FindRequest { string study_uid = 1; string series_uid = 2; int32 limit = 3; }
+message FindResponse { repeated CStoreResponse items = 1; string next_cursor = 2; }
+message MoveRequest { string instance_uid = 1; string destination_id = 2; }
+message MoveResponse { string job_id = 1; string status = 2; }
+message TransformRequest { string instance_uid = 1; string policy_id = 2; }
+message TransformResponse { string digest = 1; }

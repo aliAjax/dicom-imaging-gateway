@@ -1,0 +1,36 @@
+openapi: 3.0.3
+info:
+  title: DICOM Imaging Gateway
+  version: 1.0.0
+paths:
+  /api/v1/ingest/validate:
+    post:
+      summary: Validate a DICOM Part 10 object
+      responses:
+        '200': {description: Valid metadata}
+  /api/v1/ingest:
+    post:
+      summary: Store and route an instance
+      responses:
+        '201': {description: Stored}
+  /api/v1/instances:
+    get:
+      summary: List instances
+      responses:
+        '200': {description: Instance page}
+  /api/v1/instances/{uid}:
+    get:
+      summary: Get instance metadata
+      parameters: [{name: uid, in: path, required: true, schema: {type: string}}]
+      responses:
+        '200': {description: Metadata}
+  /api/v1/instances/{uid}/deidentify:
+    post:
+      summary: Apply de-identification policy
+      responses:
+        '200': {description: Transformed metadata}
+  /api/v1/audit/export:
+    get:
+      summary: Export verified audit events
+      responses:
+        '200': {description: Audit chain}
