@@ -24,6 +24,8 @@ func (s *LeaseStore) Acquire(job, owner string, ttl time.Duration) (Lease, error
 	return l, nil
 }
 func (s *LeaseStore) Renew(job, owner string, ttl time.Duration) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	l, ok := s.leases[job]
 	if !ok || l.Owner != owner || l.ExpiresAt.Before(time.Now().UTC()) {
 		return errors.New("lease fencing failure")

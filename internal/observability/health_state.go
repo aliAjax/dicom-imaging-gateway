@@ -1,12 +1,14 @@
 package observability
 
 import (
+	"sync"
 	"sync/atomic"
 	"time"
 )
 
 type HealthState struct {
 	ready    atomic.Bool
+	mu       sync.Mutex
 	started  time.Time
 	stopped  time.Time
 	requests atomic.Int64
@@ -20,7 +22,9 @@ func NewHealthState() *HealthState {
 }
 func (h *HealthState) SetReady(v bool) { h.ready.Store(v) }
 func (h *HealthState) Shutdown(at time.Time) {
+	h.mu.Lock()
 	h.stopped = at
+	h.mu.Unlock()
 	h.ready.Store(false)
 }
 func (h *HealthState) Record(ok bool) {
@@ -30,9 +34,16 @@ func (h *HealthState) Record(ok bool) {
 	}
 }
 func (h *HealthState) Snapshot() map[string]any {
+	h.mu.Lock()
+	started, stopped := h.started, h.stopped
+	h.mu.Unlock()
 	end := time.Now()
-	if !h.stopped.IsZero() {
-		end = h.stopped
+	if !stopped.IsZero() {
+		end = stopped
 	}
-	return map[string]any{"ready": h.ready.Load(), "uptime_seconds": int(end.Sub(h.started).Seconds()), "requests": h.requests.Load(), "failures": h.failures.Load()}
+	uptime := 0
+	if end.After(started) {
+		uptime = int(end.Sub(started).Seconds())
+	}
+	return map[string]any{"ready": h.ready.Load(), "uptime_seconds": uptime, "requests": h.requests.Load(), "failures": h.failures.Load()}
 }

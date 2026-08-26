@@ -20,13 +20,16 @@ type attemptGroup struct {
 }
 
 func newAttemptGroup() *attemptGroup {
-	return &attemptGroup{results: make(chan error), finished: make(chan struct{})}
+	return &attemptGroup{results: make(chan error, 1), finished: make(chan struct{})}
 }
 
 func (g *attemptGroup) start(ctx context.Context, fn func(context.Context) error) {
+	g.wg.Add(1)
 	go func() {
-		defer close(g.finished)
 		defer g.wg.Done()
+		defer close(g.finished)
+		// Buffered so the goroutine never blocks on the send, even when the
+		// caller has already bailed out on ctx.Done() and stopped reading.
 		g.results <- fn(ctx)
 	}()
 }
@@ -55,11 +58,11 @@ func RunWithRetry(ctx context.Context, p RetryPolicy, fn func(context.Context) e
 		var err error
 		select {
 		case err = <-attempt.results:
+			attempt.wait()
 		case <-ctx.Done():
 			attempt.wait()
 			return ctx.Err()
 		}
-		attempt.wait()
 		if err == nil {
 			return nil
 		}
