@@ -1,0 +1,13 @@
+{
+  "project_intro": "基于 Go 实现的 DICOM 医疗影像网关 Web API 项目，一款后端服务，完成影像接收、脱敏处理与路由投递。",
+  "mode": "service",
+  "start": "go run ./cmd/dicom-gateway",
+  "workdir": ".",
+  "env": {
+    "DICOM_HTTP_ADDR": "127.0.0.1:18080",
+    "DICOM_DATA_DIR": "./.runtime-data"
+  },
+  "ready_url": "http://127.0.0.1:18080/readyz",
+  "ready_status": [200],
+  "startup_timeout": 30
+}
