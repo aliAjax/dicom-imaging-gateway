@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DICOM Gateway Console</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div>
+      <p class="eyebrow">Clinical imaging operations</p>
+      <h1>DICOM Gateway</h1>
+    </div>
+    <div class="service-state"><span id="status-dot"></span><span id="status-text">Checking service</span></div>
+  </header>
+  <main>
+    <section class="summary" aria-label="Gateway summary">
+      <article><span>Instances</span><strong id="instance-count">-</strong></article>
+      <article><span>Route jobs</span><strong id="job-count">-</strong></article>
+      <article><span>Destinations</span><strong id="destination-count">-</strong></article>
+    </section>
+    <section class="workspace">
+      <div class="section-heading">
+        <div><p class="eyebrow">Live repository</p><h2>Recent instances</h2></div>
+        <button id="refresh" type="button" title="Refresh gateway data" aria-label="Refresh gateway data">&#8635;</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Instance UID</th><th>Study</th><th>Modality</th><th>Status</th></tr></thead>
+          <tbody id="instances"><tr><td colspan="4" class="empty">Loading gateway data...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
