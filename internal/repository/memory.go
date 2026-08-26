@@ -35,16 +35,14 @@ func (r *Repository) GetInstance(id string) (dicom.Instance, bool) {
 	return v, ok
 }
 
-var instanceSnapshotScratch []dicom.Instance
-
 func (r *Repository) ListInstances() []dicom.Instance {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	instanceSnapshotScratch = instanceSnapshotScratch[:0]
+	out := make([]dicom.Instance, 0, len(r.instances))
 	for _, v := range r.instances {
-		instanceSnapshotScratch = append(instanceSnapshotScratch, v)
+		out = append(out, v)
 	}
-	return instanceSnapshotScratch
+	return out
 }
 func (r *Repository) PutDestination(v dicom.Destination) {
 	r.mu.Lock()
@@ -75,15 +73,13 @@ func (r *Repository) GetJob(id string) (dicom.RouteJob, bool) {
 	return v, ok
 }
 
-var jobSnapshotScratch []dicom.RouteJob
-
 func (r *Repository) Jobs() []dicom.RouteJob {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	jobSnapshotScratch = jobSnapshotScratch[:0]
+	out := make([]dicom.RouteJob, 0, len(r.jobs))
 	for _, v := range r.jobs {
-		jobSnapshotScratch = append(jobSnapshotScratch, v)
+		out = append(out, v)
 	}
-	return jobSnapshotScratch
+	return out
 }
 func Now() time.Time { return time.Now().UTC() }

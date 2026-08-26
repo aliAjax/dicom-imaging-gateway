@@ -39,7 +39,9 @@ func (l *Log) Append(action, subject, actor string, details map[string]string) E
 func (l *Log) Export() []Event {
 	l.mu.RLock()
 	defer l.mu.RUnlock()
-	return l.events
+	out := make([]Event, len(l.events))
+	copy(out, l.events)
+	return out
 }
 func (l *Log) Verify() bool {
 	l.mu.RLock()
