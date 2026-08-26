@@ -26,7 +26,7 @@ func DecodeFrames(blob []byte) ([][]byte, error) {
 		size := int(blob[offset])
 		offset++
 		if size == 0 || size > len(blob)-offset {
-			return frames, fmt.Errorf("frame %d at byte %d: %v", len(frames), header, ErrTruncatedFrame)
+			return frames, &FrameError{Index: len(frames), Offset: header, Err: ErrTruncatedFrame}
 		}
 		frames = append(frames, append([]byte(nil), blob[offset:offset+size]...))
 		offset += size

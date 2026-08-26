@@ -16,7 +16,7 @@ func (Processor) Process(ctx context.Context, inputs [][]byte) BatchResult {
 		}
 		frames, err := DecodeFrames(input)
 		if err != nil {
-			err = fmt.Errorf("input %d rejected: %v", i, err)
+			err = fmt.Errorf("input %d rejected: %w", i, err)
 		}
 		result.Items[i] = ItemResult{Frames: frames, Err: err}
 	}
