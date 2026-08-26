@@ -102,5 +102,7 @@ type AssociationSnapshot struct {
 func (a *Association) Snapshot() AssociationSnapshot {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	return AssociationSnapshot{ID: a.ID, CallingAET: a.CallingAET, CalledAET: a.CalledAET, State: a.State, AcceptedSyntaxes: a.AcceptedSyntaxes, LastActivity: a.LastActivity, MaxPDU: a.MaxPDU}
+	syntaxes := make([]string, len(a.AcceptedSyntaxes))
+	copy(syntaxes, a.AcceptedSyntaxes)
+	return AssociationSnapshot{ID: a.ID, CallingAET: a.CallingAET, CalledAET: a.CalledAET, State: a.State, AcceptedSyntaxes: syntaxes, LastActivity: a.LastActivity, MaxPDU: a.MaxPDU}
 }

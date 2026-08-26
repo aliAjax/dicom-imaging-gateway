@@ -35,5 +35,9 @@ func (m *Mapper) Map(original string) string {
 func (m *Mapper) Snapshot() map[string]string {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	return m.values
+	out := make(map[string]string, len(m.values))
+	for k, v := range m.values {
+		out[k] = v
+	}
+	return out
 }
